@@ -1,21 +1,23 @@
 package html
 
 import (
-	"net/http"
+	"bytes"
 	"github.com/PuerkitoBio/goquery"
 	"strings"
+	"go2web/internal/connect"
 	"golang.org/x/net/html" 
 	"regexp"
 )
 
 func ParsePage(url string) (string, error) {
-    res, err := http.Get(url)
+    res, err := connect.Get(url, nil, nil)
     if err != nil {
         return "", err
     }
-    defer res.Body.Close()
 
-    doc, err := goquery.NewDocumentFromReader(res.Body)
+	reader := bytes.NewReader(res.Body)
+
+    doc, err := goquery.NewDocumentFromReader(reader)
     if err != nil {
         return "", err
     }

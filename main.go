@@ -7,7 +7,7 @@ import (
 
 func main() {
 	
-	response, err := html.ParsePage("https://www.utm.md")
+	response, err := html.ParsePage("https://point.md")
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
 		return

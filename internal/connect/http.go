@@ -20,9 +20,9 @@ type HttpResponse struct {
 
 // core method of this module
 func Request(method string, url string, body []byte, headers map[string]string) (*HttpResponse, error) {
-    host, port, secured := parseURL(url)
+    host, path, port, secured := parseURL(url)
 
-    httpRequest := []byte(fmt.Sprintf("%s / HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n", method, host))
+    httpRequest := []byte(fmt.Sprintf("%s %s HTTP/1.1\r\nHost: %s\r\nConnection: close\r\n", method, path, host))
     for key, value := range headers {
         httpRequest = append(httpRequest, []byte(fmt.Sprintf("%s: %s\r\n", key, value))...)
     }
@@ -56,26 +56,34 @@ func Put(url string, body []byte, headers map[string]string) (*HttpResponse, err
 	return Request("PUT", url, body, headers)
 }
 
-func parseURL(url string) (string, int, bool) {
+func parseURL(url string) (string, string, int, bool) {
+    var host, path string
+    var port int
+    var secured bool
 
-	var host string
-	var port int
-	var secured bool
+    // 1. Remove Protocol
+    remaining := url
+    if strings.HasPrefix(url, "http://") {
+        remaining = url[7:]
+        secured = false
+        port = 80
+    } else if strings.HasPrefix(url, "https://") {
+        remaining = url[8:]
+        secured = true
+        port = 443
+    }
 
-	if len(url) > 7 && url[:7] == "http://" {
-		host = url[7:]
-		secured = false
-		port = 80
-	} else if len(url) > 8 && url[:8] == "https://" {
-		host = url[8:]
-		port = 443
-		secured = true
-	} else {
-		host = url
-		port = 80
-		secured = false;
-	}
-	return host, port, secured
+    // 2. Split Host and Path
+    slashIndex := strings.Index(remaining, "/")
+    if slashIndex == -1 {
+        host = remaining
+        path = "/"
+    } else {
+        host = remaining[:slashIndex]
+        path = remaining[slashIndex:]
+    }
+
+    return host, path, port, secured
 }
 
 func HttpTCPReadStrategy(conn net.Conn) ([]byte, error) {
@@ -195,6 +203,8 @@ func ParseRawToResponse(raw []byte) (*HttpResponse, error) {
             resp.Headers[strings.TrimSpace(parts[0])] = strings.TrimSpace(parts[1])
         }
     }
+
+	fmt.Println("Headers:", resp.Headers)
 
     body, err := io.ReadAll(reader)
     if err != nil {
