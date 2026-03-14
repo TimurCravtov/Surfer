@@ -4,7 +4,7 @@ Copyright © 2026 NAME HERE <EMAIL ADDRESS>
 */
 package main
 
-import "surfer/cmd"
+import "go2web/cmd"
 
 func main() {
 	cmd.Execute()
