@@ -7,10 +7,10 @@ import (
 )
 
 func main() {
-	engine := search_engines.NewBingSearchEngine("https://www.bing.com/search?q=")
-	response, err := engine.Search("cats")
+	engine := search_engines.NewMojeekSearchEngine("https://www.mojeek.com/search?q=")
+	response, err := engine.Search("cats", 1)
 
-	fmt.Println(calvin.AsciiFont("BING")) 
+	fmt.Println(calvin.AsciiFont("MOJEEK")) 
 
 	if err != nil {
 		fmt.Printf("Error: %v\n", err)
