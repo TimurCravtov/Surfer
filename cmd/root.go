@@ -14,7 +14,11 @@ var rootCmd = &cobra.Command{
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if searchQuery, _ := cmd.Flags().GetString("search"); searchQuery != "" {
-			cli.HandleSearchDynamic(cmd, args)
+			if dynamic, _ := cmd.Flags().GetBool("dynamic"); dynamic {
+				cli.HandleSearchDynamic(cmd, args)
+			} else {
+				cli.HandleSearch(cmd, args)
+			}
 		}
 		if url, _ := cmd.Flags().GetString("url"); url != "" {
 			cli.HandleUrlRequest(cmd, args)
@@ -32,6 +36,8 @@ func Execute() {
 func init() {
 
 	rootCmd.Flags().StringP("search", "s", "", "Search the web with a query")
+	rootCmd.Flags().BoolP("dynamic", "d", false, "Use dynamic search (with CLI interface)")
+
 	rootCmd.Flags().StringP("engine", "e", "startpage", "Search engine to use (e.g., startpage, mojeek)")
 	rootCmd.Flags().StringP("url", "u", "", "Fetch and display the content of a URL")
 	rootCmd.Flags().IntP("max-redirects", "", 10, "Maximum number of redirects to follow when fetching a URL. Pass -1 to not limit redirects. Default is 10.")
