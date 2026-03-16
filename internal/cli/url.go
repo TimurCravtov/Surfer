@@ -55,6 +55,8 @@ func HandleUrlRequest(cmd *cobra.Command, args []string) {
         basePrinter = printer.HtmlResponseParser
     case html.TypeJSON:
         basePrinter = printer.JsonPrinter
+    case html.TypePNG, html.TypeJPEG, html.TypeGIF:
+        basePrinter = printer.ImagePrinter
     default:
         basePrinter = printer.HtmlResponseParser
     }

@@ -10,19 +10,31 @@ import (
 type ContentType string
 
 const (
-	TypeJSON       ContentType = "application/json"
-	TypeHTML       ContentType = "text/html"
-	TypePlainText  ContentType = "text/plain"
-	TypeXML        ContentType = "application/xml"
-	TypeForm       ContentType = "application/x-www-form-urlencoded"
-	TypeMultipart  ContentType = "multipart/form-data"
+	TypeJSON      ContentType = "application/json"
+	TypeHTML      ContentType = "text/html"
+	TypePlainText ContentType = "text/plain"
+	TypeXML       ContentType = "application/xml"
+	TypeForm      ContentType = "application/x-www-form-urlencoded"
+	TypeMultipart ContentType = "multipart/form-data"
 	TypeJavascript ContentType = "application/javascript"
-	TypeCSS        ContentType = "text/css"
+	TypeCSS       ContentType = "text/css"
+
+	TypePNG       ContentType = "image/png"
+	TypeJPEG      ContentType = "image/jpeg"
+	TypeGIF       ContentType = "image/gif"
 )
 
+func (c ContentType) IsImage() bool {
+	return strings.HasPrefix(string(c), "image/")
+}
+
 func GetContentType(response *connect.HttpResponse) (ContentType, error) {
-	// Prefer the Content-Type header when available.
 	typeHeader, ok := response.Headers["content-type"]
+	if !ok {
+
+		typeHeader, ok = response.Headers["content-type"]
+	}
+
 	if ok && strings.TrimSpace(typeHeader) != "" {
 		mediaType, _, err := mime.ParseMediaType(typeHeader)
 		if err != nil {
@@ -31,7 +43,7 @@ func GetContentType(response *connect.HttpResponse) (ContentType, error) {
 		return ContentType(mediaType), nil
 	}
 
-	// Fallback: sniff from body.
 	detected := http.DetectContentType(response.Body)
-	return ContentType(detected), nil
+	mediaType, _, _ := mime.ParseMediaType(detected)
+	return ContentType(mediaType), nil
 }
