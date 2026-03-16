@@ -264,7 +264,7 @@ func HandleSearchDynamic(cmd *cobra.Command, args []string) {
 			return
 		}
 
-		printer := printer.WithHeaders(printer.WithHero(printer.HtmlResponseParser))
+		printer := printer.WithStatusLine(printer.WithHeaders(printer.WithHero(printer.HtmlResponseParser)))
 
 		str, _ := printer(fm.selected.URL, response)
 

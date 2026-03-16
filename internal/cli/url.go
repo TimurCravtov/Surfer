@@ -61,7 +61,7 @@ func HandleUrlRequest(cmd *cobra.Command, args []string) {
         basePrinter = printer.HtmlResponseParser
     }
 
-    printer := printer.WithHeaders(printer.WithHero(basePrinter))
+    printer := printer.WithStatusLine(printer.WithHeaders(printer.WithHero(basePrinter)))
     
     str, _ := printer(urlStr, response);
     

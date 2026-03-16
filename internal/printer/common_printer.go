@@ -39,6 +39,37 @@ func WithHeaders(next HttpResponsePrinter) HttpResponsePrinter {
     }
 }
 
+func WithStatusLine(next HttpResponsePrinter) HttpResponsePrinter {
+    return func(url string, response *connect.HttpResponse) (string, error) {
+        // Determine color based on the first digit of the status code
+        var statusColor string
+        switch response.StatusCode / 100 {
+        case 2:
+            statusColor = html.ColorGreen   // Success
+        case 3:
+            statusColor = html.ColorBlue    // Redirects
+        case 4:
+            statusColor = html.ColorYellow  // Client Errors
+        case 5:
+            statusColor = html.ColorRed     // Server Errors
+        default:
+            statusColor = html.ColorReset   // Fallback for 1xx or unknown
+        }
+
+        rawStatus := fmt.Sprintf("%d %s", response.StatusCode, response.StatusText)
+        coloredStatus := html.Colorize(rawStatus, statusColor)
+        
+        statusLine := fmt.Sprintf("Status: %s", coloredStatus)
+
+        nextResponse, err := next(url, response)
+        if err != nil {
+            return "", err
+        }
+        
+        return statusLine + "\n" + nextResponse, nil
+    }
+}
+
 func buildWebsiteHero(response *connect.HttpResponse, rootUrl string) string {
     faviconUrl := getFavicoLink(response, rootUrl)
 
