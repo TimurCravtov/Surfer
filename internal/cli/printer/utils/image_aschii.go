@@ -25,7 +25,7 @@ func ImageToAscii(imageData []byte, width int, height int) (string, error) {
 
 	// Density map (ordered from dark/empty to light/dense)
 	// Swap the order if your terminal background is light
-	asciiChars := []rune{' ', '.', ':', '-', '=', '+', '*', '#', '%', '@'}
+	asciiChars := []rune{' ', '▏', '▖', '▂', '░', '▍', '▚', '▒', '▅', '▋', '▓', '▇', '█'}
 	var sb strings.Builder
 
 	for y := 0; y < height; y++ {
