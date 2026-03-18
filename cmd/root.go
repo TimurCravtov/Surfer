@@ -2,15 +2,24 @@ package cmd
 
 import (
 	"fmt"
-	"os"
 	"go2web/internal/cli"
+	"go2web/internal/cli/printer/utils"
+	"os"
+
 	"github.com/spf13/cobra"
 )
 
 var rootCmd = &cobra.Command{
 	Use:   "go2web",
 	Short: "Go2Web is a CLI tool for searching the web and retrieving results.",
-	Long: `Go2Web is a command-line application that allows users to search the web using various search engines and retrieve results directly in the terminal. It supports features like caching, redirects, and customizable search engines.`,
+	Long: utils.Colorize(`
+   ______      ___ _       __     __
+  / ____/___  |__ \ |     / /__  / /_
+ / / __/ __ \ __/ / | /| / / _ \/ __ \
+/ /_/ / /_/ // __/| |/ |/ /  __/ /_/ /
+\____/\____/____/ |__/|__/\___/_.___/
+`, utils.ColorBlue) + `
+Go2Web is a command-line application that allows users to search the web using various search engines and retrieve results directly in the terminal. It supports features like caching, redirects, and customizable search engines.`,
 	Run: func(cmd *cobra.Command, args []string) {
 
 		if searchQuery, _ := cmd.Flags().GetString("search"); searchQuery != "" {
